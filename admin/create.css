@@ -1,0 +1,38 @@
+.upload-image-container {
+    position: relative;
+    border-radius: 20px;
+    border: 1px dashed grey ;
+    overflow: hidden; 
+    max-height: 300px; 
+}
+
+#file-upload-btn {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 24px; 
+}
+
+#file-upload-btn i {
+    color: black; 
+}
+
+.image-preview-container:hover #delete-icon {
+    display: block; 
+}
+
+.form-control .custom-class{
+    border-radius: 15px;
+}
+
+.title{
+    border-radius: 20px;
+}
+
+.button-container .btn{
+    border-radius: 20px;
+}
+
+.profile-container img{
+    max-height: 10px !important;
+}
