@@ -85,11 +85,15 @@ $department_id = $_SESSION['user']['department_id'];
                                         // Create a unique filename
                                         $filename = uniqid('', true) . '.' . $ext;
                                         $uploadFilePath = $uploadDir . $filename;
+
+                                        // Move the file to the upload directory
+                                        move_uploaded_file($image_tmp_name, $uploadFilePath);
+                                        $new_image = $filename; // Set the new image filename
                                     }
-                                    move_uploaded_file($image_tmp_name, $uploadFilePath);
                                 } else {
                                     $new_image = $image; // Keep the old image
                                 }
+
 
                                 // Update the announcement
                                 $update_query = "UPDATE announcement SET title = :title, description = :description, image = :image, department_id = :department, year_level_id = :year_level, updated_at = NOW() WHERE announcement_id = :id";
@@ -102,7 +106,10 @@ $department_id = $_SESSION['user']['department_id'];
                                 $stmt->bindParam(':id', $announcement_id);
 
                                 if ($stmt->execute()) {
-                                    echo "<div class='alert alert-success'>Announcement updated successfully!</div>";
+                                    echo "<script>
+                                            alert('Announcement was updated successfully!');
+                                            window.location.href = 'admin.php';
+                                          </script>";
                                 } else {
                                     echo "<div class='alert alert-danger'>Error updating announcement.</div>";
                                 }
