@@ -2,7 +2,20 @@
 -- Please log an issue at https://github.com/pgadmin-org/pgadmin4/issues/new/choose if you find any bugs, including reproduction steps.
 BEGIN;
 
-CREATE DATABASE ISMS;
+
+CREATE TABLE IF NOT EXISTS public.admin
+(
+    admin_id integer NOT NULL DEFAULT nextval('school_staffs_staff_id_seq'::regclass),
+    first_name character varying(100) COLLATE pg_catalog."default",
+    last_name character varying(100) COLLATE pg_catalog."default",
+    email character varying(100) COLLATE pg_catalog."default",
+    password character varying(100) COLLATE pg_catalog."default",
+    contact_number character varying(15) COLLATE pg_catalog."default",
+    department_id integer,
+    otp character varying(6) COLLATE pg_catalog."default",
+    otp_expiry timestamp without time zone,
+    CONSTRAINT school_staffs_pkey PRIMARY KEY (admin_id)
+);
 
 CREATE TABLE IF NOT EXISTS public.announcement
 (
@@ -12,8 +25,9 @@ CREATE TABLE IF NOT EXISTS public.announcement
     message character varying(255) COLLATE pg_catalog."default",
     department_id integer,
     year_level_id integer,
-    staff_id integer,
-    "Type" character varying(50) COLLATE pg_catalog."default",
+    admin_id integer,
+    image text COLLATE pg_catalog."default",
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT announcement_pkey PRIMARY KEY (announcement_id)
 );
 
@@ -31,18 +45,6 @@ CREATE TABLE IF NOT EXISTS public.department
     CONSTRAINT department_pkey PRIMARY KEY (department_id)
 );
 
-CREATE TABLE IF NOT EXISTS public.admin
-(
-    staff_id serial NOT NULL,
-    first_name character varying(100) COLLATE pg_catalog."default",
-    last_name character varying(100) COLLATE pg_catalog."default",
-    email character varying(100) COLLATE pg_catalog."default",
-    password character varying(100) COLLATE pg_catalog."default",
-    contact_number character varying(15) COLLATE pg_catalog."default",
-    department_id integer,
-    CONSTRAINT admin_pkey PRIMARY KEY (staff_id)
-);
-
 CREATE TABLE IF NOT EXISTS public.student
 (
     student_id serial NOT NULL,
@@ -54,6 +56,8 @@ CREATE TABLE IF NOT EXISTS public.student
     year_level_id integer,
     department_id integer,
     course_id integer,
+    otp character varying(6) COLLATE pg_catalog."default",
+    otp_expiry timestamp without time zone,
     CONSTRAINT student_pkey PRIMARY KEY (student_id)
 );
 
@@ -64,6 +68,13 @@ CREATE TABLE IF NOT EXISTS public.year_level
     CONSTRAINT year_level_pkey PRIMARY KEY (year_level_id)
 );
 
+ALTER TABLE IF EXISTS public.admin
+    ADD CONSTRAINT school_staffs_department_id_fkey FOREIGN KEY (department_id)
+    REFERENCES public.department (department_id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION;
+
+
 ALTER TABLE IF EXISTS public.announcement
     ADD CONSTRAINT announcement_department_id_fkey FOREIGN KEY (department_id)
     REFERENCES public.department (department_id) MATCH SIMPLE
@@ -72,8 +83,8 @@ ALTER TABLE IF EXISTS public.announcement
 
 
 ALTER TABLE IF EXISTS public.announcement
-    ADD CONSTRAINT announcement_staff_id_fkey FOREIGN KEY (staff_id)
-    REFERENCES public.admin (staff_id) MATCH SIMPLE
+    ADD CONSTRAINT announcement_staff_id_fkey FOREIGN KEY (admin_id)
+    REFERENCES public.admin (admin_id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION;
 
@@ -81,13 +92,6 @@ ALTER TABLE IF EXISTS public.announcement
 ALTER TABLE IF EXISTS public.announcement
     ADD CONSTRAINT announcement_year_level_id_fkey FOREIGN KEY (year_level_id)
     REFERENCES public.year_level (year_level_id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION;
-
-
-ALTER TABLE IF EXISTS public.admin
-    ADD CONSTRAINT admin_department_id_fkey FOREIGN KEY (department_id)
-    REFERENCES public.department (department_id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION;
 
