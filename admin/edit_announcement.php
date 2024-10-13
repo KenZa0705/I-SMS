@@ -160,7 +160,7 @@ $department_id = $_SESSION['user']['department_id'];
 
     <footer>
         <!-- Footer content -->
-
+        <?php include '../cdn/footer.html'; ?>
     </footer>
     <!-- Body CDN links -->
     <?php include '../cdn/body.html'; ?>

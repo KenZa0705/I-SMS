@@ -166,7 +166,7 @@ $department_id = $_SESSION['user']['department_id'];
                 <script src="admin.js"></script>
     </main>
     <footer>
-
+        <?php include '../cdn/footer.html'; ?>
     </footer>
     <!-- Body CDN links -->
     <?php include '../cdn/body.html'; ?>
