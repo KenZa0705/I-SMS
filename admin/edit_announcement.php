@@ -75,9 +75,18 @@ $department_id = $_SESSION['user']['department_id'];
                                 if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
                                     $image_tmp_name = $_FILES['image']['tmp_name'];
                                     $image_name = $_FILES['image']['name'];
-                                    $new_image = $image_name;
+                                    $uploadDir = 'uploads/';
 
-                                    move_uploaded_file($image_tmp_name, $new_image);
+                                    // Get the file extension
+                                    $ext = pathinfo($image_name, PATHINFO_EXTENSION);
+                                    $allowedExt = ['jpg', 'jpeg', 'png', 'gif'];
+
+                                    if (in_array(strtolower($ext), $allowedExt)) {
+                                        // Create a unique filename
+                                        $filename = uniqid('', true) . '.' . $ext;
+                                        $uploadFilePath = $uploadDir . $filename;
+                                    }
+                                    move_uploaded_file($image_tmp_name, $uploadFilePath);
                                 } else {
                                     $new_image = $image; // Keep the old image
                                 }
