@@ -75,8 +75,7 @@ $department_id = $_SESSION['user']['department_id'];
                                 if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
                                     $image_tmp_name = $_FILES['image']['tmp_name'];
                                     $image_name = $_FILES['image']['name'];
-                                    $upload_dir = 'uploads/';
-                                    $new_image = $upload_dir . $image_name;
+                                    $new_image = $image_name;
 
                                     move_uploaded_file($image_tmp_name, $new_image);
                                 } else {
