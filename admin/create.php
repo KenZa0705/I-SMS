@@ -37,7 +37,7 @@ $department_id = $_SESSION['user']['department_id'];
         <?php include '../cdn/navbar.php'; ?>
     </header>
     <main>
-        <div class="container pt-5">
+        <div class="container-fluid pt-5">
             <div class="row g-4">
                 <!-- left sidebar -->
                 <?php include '../cdn/sidebar.php'; ?>
@@ -60,14 +60,15 @@ $department_id = $_SESSION['user']['department_id'];
                                 <div class="d-flex">
                                     <p id="upload-text" class="mt-3">Upload Photo</p>
                                     <input type="file" class="form-control-file" id="image" name="image" style="display: none;" onchange="imagePreview()">
-                                    <button class="btn btn-light" id="file-upload-btn" onclick="document.getElementById('image').click();">
+                                    <button class="btn btn-light" id="file-upload-btn">
                                         <i class="bi bi-upload"></i>
                                     </button>
-                                    <img id="image-preview" src="#" alt="Image Preview" style="display: none; max-width: 100%; margin-top: 15px;">
+                                    <img class="img-fluid" id="image-preview" src="#" alt="Image Preview" style="display: none; max-width: 100%;">
                                     <i id="delete-icon" class="bi bi-trash" style="position: absolute; top: 5px; right: 5px; display: none; cursor: pointer;" onclick="deleteImage()"></i>
                                 </div>
                             </div>
                         </div>
+
                         <div class="button-container d-flex justify-content-end">
                             <button type="submit" class="btn btn-primary px-3">Post</button>
                         </div>
@@ -76,9 +77,6 @@ $department_id = $_SESSION['user']['department_id'];
                 </div>
                 <script src="create.js"></script>
     </main>
-    <footer>
-        <?php include '../cdn/footer.html'; ?>
-    </footer>
     <!-- Body CDN links -->
     <?php include '../cdn/body.html'; ?>
 </body>

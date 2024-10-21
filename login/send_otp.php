@@ -57,7 +57,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $mail->Port = 587;                               // TCP port to connect to
 
             //Recipients
-            $mail->setFrom('dotaboyhey@gmail.com', 'dotaboy hey');
+            $mail->setFrom('ranonline1219@gmail.com', 'ISMS - BSU Announcement Portal');
             $mail->addAddress($email);                       // Add recipient
 
             //Content

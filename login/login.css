@@ -103,6 +103,21 @@ a {
     cursor: pointer;
 }
 
+.modal-body input{
+    border-radius: 15px;
+}
+
+#recaptchaModal {
+    z-index: 1050;
+}
+
+#otp-modal{
+    z-index: 1050;
+}
+
+.modal-backdrop {
+    z-index: 1040;
+}
   
 
 @media (max-width: 768px) {

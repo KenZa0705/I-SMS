@@ -1,23 +1,34 @@
 -- Insert dummy data for year_level
 INSERT INTO year_level (year_level)
 VALUES 
-    ('First Year'),
-    ('Second Year'),
-    ('Third Year');
+    ('1st Year'),
+    ('2nd Year'),
+    ('3rd Year');
 
 -- Insert dummy data for department
 INSERT INTO department (department_name)
-VALUES 
-    ('Computer Science'),
-    ('Mathematics'),
-    ('Physics');
+VALUES
+('CECS'),
+('CABE'),
+('CAS'),
+('CE'),
+('CIT'),
+('CTE');
 
 -- Insert dummy data for course
 INSERT INTO course (course_name)
-VALUES 
-    ('Bachelor of Science in Computer Science'),
-    ('Bachelor of Science in Mathematics'),
-    ('Bachelor of Science in Physics');
+VALUES
+('BSBA'),
+('BSMA'),
+('BSP'),
+('BAC'),
+('BSIE'),
+('BSIT-CE'),
+('BSIT-Electrical'),
+('BSIT-Electronic'),
+('BSIT-ICT'),
+('BSIT'),
+('BSE');
 
 -- Insert dummy data for admin (PostgreSQL uses single quotes for strings)
 INSERT INTO admin (first_name, last_name, email, password, contact_number, department_id)

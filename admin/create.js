@@ -1,7 +1,8 @@
 document.getElementById('file-upload-btn').addEventListener('click', function(event) {
-    event.preventDefault();  // Prevent form submission when clicking the upload button
-    document.getElementById('image').click();  // Trigger file input click
+    event.preventDefault(); 
+    document.getElementById('image').click(); 
 });
+
 
 function imagePreview() {
     const input = document.getElementById('image');
@@ -39,3 +40,5 @@ function deleteImage() {
     uploadBtn.style.display = 'block'; // Show the upload button
     deleteIcon.style.display = 'none'; // Hide the delete icon
 }
+
+

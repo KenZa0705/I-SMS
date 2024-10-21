@@ -30,19 +30,7 @@ $course = $_SESSION['user']['course_id'];
         name="viewport"
         content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
-    <!-- Bootstrap CSS v5.2.1 -->
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
-        crossorigin="anonymous" />
-
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <?php include '../cdn/head.html'; ?>
 
     <link rel="stylesheet" href="user.css">
 
@@ -50,43 +38,10 @@ $course = $_SESSION['user']['course_id'];
 
 <body>
     <header>
-        <nav class="navbar navbar-expand-lg bg-white text-black fixed-top mb-5">
-            <div class="container">
-                <div class="user-left d-flex">
-                    <div class="d-md-none ms-0 mt-2 me-3">
-                        <button class="navbar-toggler border-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
-                            <span class="navbar-toggler-icon"></span>
-                          </button>                        
-                    </div>
-        
-                    <a class="navbar-brand d-flex align-items-center" href="#"><img src="img/brand.png" class="img-fluid branding" alt=""></a>
-                </div>
-
-                <div class="user-mid d-none d-md-block">
-                    <form class="d-flex" role="search">
-                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                        <button style="border: none; background: none;"><i class="bi bi-search"></i></button>
-                    </form>
-                </div>
-            
-                <div class="user-right d-flex align-items-center justify-content-center">
-                    <p class="username d-flex align-items-center m-0">Username</p>
-                    <div class="user-profile">
-                        <div class="dropdown">
-                            <button class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" style="border: none; background: none; padding: 0;">
-                                <img class="img-fluid w-100" src="img/test pic.jpg" alt="">
-                            </button>
-                            <ul class="dropdown-menu mt-3" style="left: auto; right:1px;">
-                                <li><a class="dropdown-item text-center" href="#">Settings</a></li>
-                                <li><a class="dropdown-item text-center" href="#">Logout</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>          
-        </nav>
+        <?php include '../cdn/navbar.php' ?>
     </header>
     <main>
-        <div class="container pt-5">
+        <div class="container-fluid pt-5">
             <div class="row g-4">
                 <!-- left sidebar -->
                 <div class="col-md-3 d-none d-md-block">
@@ -94,8 +49,8 @@ $course = $_SESSION['user']['course_id'];
                         <div class="filter">
                             <div class="card">
                                 <div class="card-body">
-                                    <p class="text-center card-title">Announcements Filter</p> 
-                                    <div class="d-flex justify-content-center">
+                                    <div class="posts">
+                                        <h5 class="text-center card-title">Announcements Filter</h5>
                                         <form class="filtered_option d-flex flex-column" action="">
                                             <label>Choose Department</label>
                                             <div class="checkbox-group mb-3">
@@ -103,7 +58,7 @@ $course = $_SESSION['user']['course_id'];
                                                 <label><input type="checkbox" name="department_filter" value="2"> CABE</label><br>
                                                 <label><input type="checkbox" name="department_filter" value="3"> CAS</label><br>
                                             </div>
-                        
+
                                             <label>Select Year Level</label>
                                             <div class="checkbox-group">
                                                 <label><input type="checkbox" name="year_level" value="1"> 1st Year</label><br>
@@ -112,50 +67,112 @@ $course = $_SESSION['user']['course_id'];
                                                 <label><input type="checkbox" name="year_level" value="4"> 4th Year</label><br>
 
                                             </div>
-                                            <button class="btn btn-primary mt-3">Filter</button>
+                                            <button type="button" class="btn btn-primary mt-3">Filter</button>
                                         </form>
                                     </div>
                                 </div>
                             </div>
-                        </div> 
+                        </div>
                     </div>
                 </div>
-                
+
                 <!-- main content -->
                 <div class="col-md-6 pt-5 px-5">
                     <div class="feed-container">
-                        <div class="card mb-3">
-                            <div class="image-container p-3">
-                                <img src="img/c1.jpg" alt="Post Image" class="img-fluid">
-                            </div>
-                            <div class="card-body">
-                                <h5 class="card-title">Post Title</h5>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Commodi error laboriosam illo nulla culpa exercitationem laudantium optio saepe sequi, nam aut fugit velit minus ipsa debitis sint deleniti doloribus voluptatum.</p>
-                                <p class="card-text">
-                                    Tags:
-                                </p>
-                                <small>Updated at October 4, 2024</small>
-                            </div>
-                        </div>
+                        <?php
+                        require_once '../login/dbh.inc.php';
+                        // Assuming you have already connected to the database
+                        try {
+                            // Query to get the announcements
+                            $query = "SELECT * FROM announcement ORDER BY updated_at DESC"; // You can modify the ORDER BY as per your requirement
+                            // Prepare and execute the query
+                            $query = "SELECT a.*, ad.first_name, ad.last_name 
+                            FROM announcement a 
+                            JOIN admin ad ON a.admin_id = ad.admin_id";
 
+                            $stmt = $pdo->prepare($query);
+                            $stmt->execute();
+
+                            // Fetch all the results
+                            $announcements = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                            if ($announcements > 0) {
+                                // Loop through the announcements and display them
+                                foreach ($announcements as $row) {
+                                    $announcement_id = $row['announcement_id'];
+                                    $title = $row['title'];
+                                    $description = $row['description'];
+                                    $image = $row['image'];
+                                    $admin_id = $row['admin_id'];
+                                    $department = $row['department_id'];
+                                    $year_level = $row['year_level_id'];
+                                    $admin_first_name = $row['first_name'];
+                                    $admin_last_name = $row['last_name'];
+                                    $admin_name =  $admin_first_name . ' ' . $admin_last_name;
+                                    $updated_at = date('F d, Y', strtotime($row['updated_at']));
+                        ?>
+
+
+                                    <div class="card mb-3">
+                                        <div class="profile-container d-flex px-3 pt-3">
+                                            <div class="profile-pic">
+                                                <img class="img-fluid" src="img/test pic.jpg" alt=""> <!-- Profile image can be dynamic if available -->
+                                            </div>
+                                            <p class="ms-1 mt-1"><?php echo htmlspecialchars($admin_name); ?></p>
+                                            <div class="dropdown ms-auto">
+                                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton<?php echo $announcement_id; ?>">
+                                                    <li><a class="dropdown-item" href="edit_announcement.php?id=<?php echo $announcement_id; ?>">Edit</a></li>
+                                                    <li>
+                                                        <a class="dropdown-item text-danger" href="#"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#deletePost"
+                                                            data-announcement-id="<?php echo $announcement_id; ?>">Delete</a>
+                                                    </li>
+
+                                                </ul>
+                                            </div>
+                                        </div>
+
+                                        <div class="image-container mx-3">
+                                            <img src="../admin/uploads/<?php echo htmlspecialchars($image); ?>" alt="Post Image" class="img-fluid">
+                                        </div>
+
+                                        <div class="card-body">
+                                            <h5 class="card-title"><?php echo htmlspecialchars($title); ?></h5>
+                                            <p><?php echo htmlspecialchars($description); ?></p>
+                                            <p class="card-text">
+                                                Tags: <?php echo htmlspecialchars($year_level), htmlspecialchars($department); ?>
+                                            </p>
+                                            <small>Updated at <?php echo htmlspecialchars($updated_at); ?></small>
+                                        </div>
+                                    </div>
+
+
+                        <?php
+                                }
+                            } else {
+                                echo '<p>No announcements found.</p>';
+                            }
+                        } catch (PDOException $e) {
+                            // Handle any errors that occur during query execution
+                            echo "Error: " . $e->getMessage();
+                        }
+                        ?>
                     </div>
-                    
-                    
                 </div>
-                
+
                 <!-- right sidebar -->
                 <div class="col-md-3 d-none d-md-block">
                     <div class="sticky-sidebar pt-5">
                         <div class="card w-100">
                             <div class="card-body">
-                              <h5 class="card-title text-center mb-2">Recent Posts</h5>
-                              <div class="posts px-4">
-                                <div class="d-flex">
-                                    <i class="bi bi-star me-2"></i> <span>JPCS Membership Fee</span>
+                                <h5 class="card-title text-center mb-2">Recent Posts</h5>
+                                <div class="posts px-4">
+                                    <div class="d-flex">
+                                        <i class="bi bi-star me-2"></i> <span>JPCS Membership Fee</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                     </div>
                     </div>
                 </div>
             </div>
@@ -170,25 +187,25 @@ $course = $_SESSION['user']['course_id'];
             </div>
             <div class="offcanvas-body mx-2">
                 <form class="d-flex mx-2 mb-3" role="search">
-                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                        <button style="border: none; background: none;"><i class="bi bi-search"></i></i></button>
+                    <!-- <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                    <button style="border: none; background: none;"><i class="bi bi-search"></i></i></button> -->
                 </form>
 
                 <div class="card mb-3">
                     <div class="card-body">
-                      <h5 class="card-title text-center mb-2">Recent Posts</h5>
+                        <h5 class="card-title text-center mb-2">Recent Posts</h5>
                     </div>
                     <div class="posts px-4">
                         <div class="d-flex">
                             <i class="bi bi-star me-2"></i> <span>JPCS Membership Fee</span>
                         </div>
                     </div>
-                  </div>
+                </div>
 
-                  <div class="filter">
+                <div class="filter">
                     <div class="card">
                         <div class="card-body">
-                            <p class="text-center card-title">Announcements Filter</p> 
+                            <p class="text-center card-title">Announcements Filter</p>
                             <div class="d-flex justify-content-center">
                                 <form class="filtered_option d-flex flex-column" action="">
                                     <label>Choose Department</label>
@@ -197,7 +214,7 @@ $course = $_SESSION['user']['course_id'];
                                         <label><input type="checkbox" name="department_filter" value="2"> CABE</label><br>
                                         <label><input type="checkbox" name="department_filter" value="3"> CAS</label><br>
                                     </div>
-                
+
                                     <label>Select Year Level</label>
                                     <div class="checkbox-group">
                                         <label><input type="checkbox" name="year_level" value="1"> 1st Year</label><br>
@@ -211,25 +228,17 @@ $course = $_SESSION['user']['course_id'];
                             </div>
                         </div>
                     </div>
-                </div> 
+                </div>
             </div>
         </div>
-    
+
     </main>
     <script src="user.js"></script>
     <footer>
 
     </footer>
     <!-- Bootstrap JavaScript Libraries -->
-    <script
-        src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
-        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
-        crossorigin="anonymous"></script>
-
-    <script
-        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
-        integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
-        crossorigin="anonymous"></script>
+    <?php include '../cdn/body.html'; ?>
 </body>
 
 </html>

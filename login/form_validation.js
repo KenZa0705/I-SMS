@@ -53,35 +53,29 @@ $(document).ready(function(){
 });
 
 $("#signin").click(function (event) {
-    event.preventDefault();
+    event.preventDefault(); 
 
     if ($("#login_form").valid()) {
         var recaptchaResponse = grecaptcha.getResponse();
+        console.log("reCAPTCHA Response: ", recaptchaResponse);
 
+        
         if (recaptchaResponse.length === 0) {
-            alert("Please complete the recaptcha");
+            $('#recaptchaModal').modal({
+            }).modal('show');
         } else {
             $("#login_form").submit();
         }
     }
 });
 
-//for password reset 
-var modal = document.getElementById("resetPasswordModal");
-var btn = document.getElementById("resetPasswordBtn");
-var span = document.getElementsByClassName("close")[0];
+$('#recaptchaModal').on('shown.bs.modal', function () {
+    $(this).find('button').focus();
+});
 
-btn.onclick = function() {
-  modal.style.display = "block";
-}
+$("#recaptchaModal button").click(function () {
+    $("#recaptchaModal").modal('hide');
+});
 
-span.onclick = function() {
-  modal.style.display = "none";
-}
 
-window.onclick = function(event) {
-  if (event.target == modal) {
-    modal.style.display = "none";
-  }
-}
 

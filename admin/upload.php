@@ -40,8 +40,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         $stmt->bindParam(':admin_id', $admin_id, PDO::PARAM_INT); // Ensure admin_id is bound as an integer
 
                         if ($stmt->execute()) {
-                            echo "File uploaded successfully: " . $uploadFilePath . "<br>";
-                            echo "Description: " . $description . "<br>Title: " . $title;
+                            echo "<script>
+                            window.location.href = 'admin.php';
+                                </script>";
                         } else {
                             echo "Failed to save details to database.";
                         }

@@ -22,7 +22,7 @@ $department_id = $_SESSION['user']['department_id'];
     <title>Edit Announcement</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    
+
     <!-- Include your head CDN links -->
     <?php include '../cdn/head.html'; ?>
     <link rel="stylesheet" href="admin.css">
@@ -36,7 +36,7 @@ $department_id = $_SESSION['user']['department_id'];
     </header>
 
     <main>
-        <div class="container pt-5">
+        <div class="container-fluid pt-5">
             <div class="row g-4">
                 <!-- Sidebar -->
                 <?php include '../cdn/sidebar.php'; ?> <!-- Assuming sidebar is in a separate file -->
@@ -146,14 +146,15 @@ $department_id = $_SESSION['user']['department_id'];
                                     <div class="d-flex">
                                         <p id="upload-text" class="mt-3">Upload Photo</p>
                                         <input type="file" class="form-control-file" id="image" name="image" style="display: none;" onchange="imagePreview()">
-                                        <button class="btn btn-light" id="file-upload-btn" onclick="document.getElementById('image').click();">
+                                        <button class="btn btn-light" id="file-upload-btn">
                                             <i class="bi bi-upload"></i>
                                         </button>
-                                        <img id="image-preview" src="uploads/<?php echo htmlspecialchars($image); ?>" alt="Image Preview" style="display: block; max-width: 100%; margin-top: 15px;">
+                                        <img id="image-preview" src="uploads/<?php echo htmlspecialchars($image); ?>" alt="Image Preview" style="display: block; max-width: 100%; margin:0;">
                                         <i id="delete-icon" class="bi bi-trash" style="position: absolute; top: 5px; right: 5px; display: block; cursor: pointer;" onclick="deleteImage()"></i>
                                     </div>
                                 </div>
                             </div>
+
                             <div class="button-container d-flex justify-content-end">
                                 <button type="submit" class="btn btn-primary px-3">Update</button>
                             </div>
@@ -162,31 +163,12 @@ $department_id = $_SESSION['user']['department_id'];
                 </div>
             </div>
         </div>
-        <script src="create.js"></script> <!-- JavaScript for image upload and preview -->
+        <script src="create.js"></script>
+        <script src="edit.js"></script>
     </main>
 
-    <footer>
-        <!-- Footer content -->
-        <?php include '../cdn/footer.html'; ?>
-    </footer>
     <!-- Body CDN links -->
     <?php include '../cdn/body.html'; ?>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const preview = document.getElementById('image-preview');
-            const uploadText = document.getElementById('upload-text');
-            const uploadBtn = document.getElementById('file-upload-btn');
-            const deleteIcon = document.getElementById('delete-icon');
-            
-            // Check if the image is already loaded
-            if (preview.src !== "#" && preview.src.trim() !== "") {
-                preview.style.display = 'block';  // Show the image
-                uploadText.style.display = 'none';  // Hide the upload text
-                uploadBtn.style.display = 'none';  // Hide the upload button
-                deleteIcon.style.display = 'block';  // Show the delete icon
-            }
-        });
-    </script>
 </body>
 
 </html>

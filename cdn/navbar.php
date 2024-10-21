@@ -1,5 +1,5 @@
 <nav class="navbar navbar-expand-lg bg-white text-black fixed-top mb-5">
-    <div class="container">
+    <div class="container-fluid">
         <div class="user-left d-flex">
             <div class="d-md-none ms-0 mt-2 me-3">
                 <button class="navbar-toggler border-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
