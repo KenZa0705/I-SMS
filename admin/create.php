@@ -47,14 +47,122 @@ $department_id = $_SESSION['user']['department_id'];
                     <h3 class="text-center"><b>Create Announcement</b></h3>
                     <form action="upload.php" method="POST" enctype="multipart/form-data">
                         <input type="text" id="admin_id" name="admin_id" value="<?php echo $admin_id; ?>" style="display: none;">
+
                         <div class="form-group mb-3">
                             <label for="title">Title</label>
                             <input type="text" class="form-control title py-3 px-3" id="title" name="title" placeholder="Enter title" required>
                         </div>
+                        
                         <div class="form-group mb-3">
                             <label for="description">Description</label>
                             <textarea class="form-control custom-class py-3 px-3" id="description" name="description" rows="5" placeholder="Enter description" required style="border-radius: 20px;"></textarea>
                         </div>
+
+                        <!-- Year Level -->
+                        <div class="form-group mb-3">
+                            <fieldset>
+                                <legend>Year Level</legend>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="1stYear" name="year_level[]" value="1st Year">
+                                    <label for="1stYear" class="form-check-label">1st Year</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="2ndYear" name="year_level[]" value="2nd Year">
+                                    <label for="2ndYear" class="form-check-label">2nd Year</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="3rdYear" name="year_level[]" value="3rd Year">
+                                    <label for="3rdYear" class="form-check-label">3rd Year</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="4thYear" name="year_level[]" value="4th Year">
+                                    <label for="4thYear" class="form-check-label">4th Year</label>
+                                </div>
+                            </fieldset>
+                        </div>
+
+                        <!-- Departments -->
+                        <div class="form-group mb-3">
+                            <fieldset>
+                                <legend>Departments</legend>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="CICS" name="department[]" value="CICS">
+                                    <label for="CICS" class="form-check-label">CICS</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="CABE" name="department[]" value="CABE">
+                                    <label for="CABE" class="form-check-label">CABE</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="CAS" name="department[]" value="CAS">
+                                    <label for="CAS" class="form-check-label">CAS</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="CIT" name="department[]" value="CIT">
+                                    <label for="CIT" class="form-check-label">CIT</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="CTE" name="department[]" value="CTE">
+                                    <label for="CTE" class="form-check-label">CTE</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="CE" name="department[]" value="CE">
+                                    <label for="CE" class="form-check-label">CE</label>
+                                </div>
+                            </fieldset>
+                        </div>
+
+                        <!-- Courses -->
+                        <div class="form-group mb-3">
+                            <fieldset>
+                                <legend>Courses</legend>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="BSBA" name="course[]" value="BSBA">
+                                    <label for="BSBA" class="form-check-label">Bachelor of Science in Business Accounting</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="BSMA" name="course[]" value="BSMA">
+                                    <label for="BSMA" class="form-check-label">Bachelor of Science in Management Accounting</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="BSP" name="course[]" value="BSP">
+                                    <label for="BSP" class="form-check-label">Bachelor of Science in Psychology</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="BAC" name="course[]" value="BAC">
+                                    <label for="BAC" class="form-check-label">Bachelor of Arts in Communication</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="BSIE" name="course[]" value="BSIE">
+                                    <label for="BSIE" class="form-check-label">Bachelor of Science in Industrial Engineering</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="BSIT-CE" name="course[]" value="BSIT-CE">
+                                    <label for="BSIT-CE" class="form-check-label">Bachelor of Industrial Technology - Computer Technology</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="BSIT-Electrical" name="course[]" value="BSIT-Electrical">
+                                    <label for="BSIT-Electrical" class="form-check-label">Bachelor of Industrial Technology - Electrical Technology</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="BSIT-Electronic" name="course[]" value="BSIT-Electronic">
+                                    <label for="BSIT-Electronic" class="form-check-label">Bachelor of Industrial Technology - Electronics Technology</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="BSIT-ICT" name="course[]" value="BSIT-ICT">
+                                    <label for="BSIT-ICT" class="form-check-label">Bachelor of Industrial Technology - Instrumentation and Control Technology</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="BSIT" name="course[]" value="BSIT">
+                                    <label for="BSIT" class="form-check-label">Bachelor of Science in Information Technology</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="BSE" name="course[]" value="BSE">
+                                    <label for="BSE" class="form-check-label">Bachelor of Secondary Education</label>
+                                </div>
+                            </fieldset>
+                        </div>
+
                         <div class="form-group mb-3">
                             <div class="upload-image-container d-flex flex-column align-items-center justify-content-center bg-white">
                                 <div class="d-flex">
@@ -68,55 +176,15 @@ $department_id = $_SESSION['user']['department_id'];
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group mb-3">
-                            <fieldset>
-                                <legend>Year Level</legend>
-                                <label for="1st Year"><input type="checkbox" class="form-control title py-3 px-3" id="1st Year" name="1st Year">1st Year</label>
-                                <label for="2nd Year"><input type="checkbox" class="form-control title py-3 px-3" id="2nd Year" name="2nd Year">2nd Year</label>
-                                <label for="3rd Year"><input type="checkbox" class="form-control title py-3 px-3" id="3rd Year" name="3rd Year">3rd Year</label>
-                                <label for="4th Year"><input type="checkbox" class="form-control title py-3 px-3" id="4th Year" name="4th Year">4th Year</label>
-                            </fieldset>
-                        </div>
-                        <div class="form-group mb-3">
-                            <fieldset>
-                                <legend>Departments</legend>
-                                <label for="CICS"><input type="checkbox" class="form-control title py-3 px-3" id="CICS" name="CICS">CICS</label>
-                                <label for="CABE"><input type="checkbox" class="form-control title py-3 px-3" id="CABE" name="CABE">CABE</label>
-                                <label for="CAS"><input type="checkbox" class="form-control title py-3 px-3" id="CAS" name="CAS">CAS</label>
-                                <label for="CIT"><input type="checkbox" class="form-control title py-3 px-3" id="CIT" name="CIT">CIT</label>
-                                <label for="CTE"><input type="checkbox" class="form-control title py-3 px-3" id="CTE" name="CTE">CTE</label>
-                                <label for="CE"><input type="checkbox" class="form-control title py-3 px-3" id="CE" name="CE">CE</label>
-                            </fieldset>
-                        </div>
-                        <div class="form-group mb-3">
-                        <fieldset>
-                                <legend>Courses</legend>
-                                <label for="BSBA"><input type="checkbox" class="form-control title py-3 px-3" id="BSBA" name="BSBA">Bachelor of Science in Business Accounting</label>
-                                <label for="BSMA"><input type="checkbox" class="form-control title py-3 px-3" id="BSMA" name="BSMA">Bachelor of Science in Management Accounting</label>
-                                <label for="BSP"><input type="checkbox" class="form-control title py-3 px-3" id="BSP" name="BSP">Bachelor of Science in Psychology</label>
-                                <label for="BAC"><input type="checkbox" class="form-control title py-3 px-3" id="BAC" name="BAC">Bachelor of Arts in Communication</label>
-                                <label for="BSIE"><input type="checkbox" class="form-control title py-3 px-3" id="BSIE" name="BSIE">Bachelor of Science in Industrial Engineering</label>
-                                <label for="BSIT-CE"><input type="checkbox" class="form-control title py-3 px-3" id="BSIT-CE" name="BSIT-CE">Bachelor of Industrial Technology - Computer Technology</label>
-                                <label for="BSIT-Electrical">
-                                    <input type="checkbox" class="form-control title py-3 px-3" id="BSIT-Electrical" name="BSIT-Electrical">Bachelor of Industrial Technology - Electrical Technology</label>
-                                <label for="BSIT-Electronic">
-                                    <input type="checkbox" class="form-control title py-3 px-3" id="BSIT-Electronic" name="BSIT-Electronic">Bachelor of Industrial Technology - Electronics Technology</label>
-                                <label for="BSIT-ICT">
-                                    <input type="checkbox" class="form-control title py-3 px-3" id="BSIT-ICT" name="BSIT-ICT">Bachelor of Industrial Technology - Instrumentation and Control Technology</label>
-                                <label for="BSIT">
-                                    <input type="checkbox" class="form-control title py-3 px-3" id="BSIT" name="BSIT">Bachelor of Science in Information Technology</label>
-                                <label for="BSE">
-                                    <input type="checkbox" class="form-control title py-3 px-3" id="BSE" name="BSE">Bachelor of Secondary Education</label>
-                            </fieldset>
-                        </div>
 
                         <div class="button-container d-flex justify-content-end">
                             <button type="submit" class="btn btn-primary px-3 mb-3">Post</button>
                         </div>
                     </form>
-
                 </div>
                 <script src="create.js"></script>
+            </div>
+        </div>
     </main>
     <!-- Body CDN links -->
     <?php include '../cdn/body.html'; ?>

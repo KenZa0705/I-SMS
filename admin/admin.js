@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function () {
     modal.addEventListener('show.bs.modal', function (event) {
         var link = event.relatedTarget;
         var studentId = link.getAttribute('data-student-id');
-        
+
         deleteBtn.onclick = function () {
             window.location.href = 'delete_student.php?id=' + studentId;
         };

@@ -1,6 +1,6 @@
 <?php
 require_once '../login/dbh.inc.php'; // DATABASE CONNECTION
-require 'vendor/autoload.php';
+require '../login/vendor/autoload.php';
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
@@ -70,8 +70,8 @@ function addNewStudent($s_first_name, $s_last_name, $s_email, $s_contact_number,
         }
     }
 
-    $sql = "INSERT INTO student (first_name, last_name, email, contact_number, year_level_id, department_id, course_id) 
-            VALUES (:first_name, :last_name, :email, :contact_number, :ylevel, :dept, :course)";
+    $sql = "INSERT INTO student (password, first_name, last_name, email, contact_number, year_level_id, department_id, course_id) 
+            VALUES ('temp', :first_name, :last_name, :email, :contact_number, :ylevel, :dept, :course)";
     
     $stmt = $pdo->prepare($sql);
     $stmt->bindParam(':first_name', $s_first_name);
@@ -289,7 +289,7 @@ function addNewStudent($s_first_name, $s_last_name, $s_email, $s_contact_number,
                                                     <li>
                                                         <a class='dropdown-item text-danger' href='#'
                                                             data-bs-toggle='modal'
-                                                            data-bs-target='#deletestudent'
+                                                            data-bs-target='#deleteStudent'
                                                             data-student-id='$student_id'>Delete</a>
                                                     </li>
 

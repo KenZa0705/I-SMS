@@ -1,7 +1,7 @@
 <?php
 $host = 'localhost';
 $port = '5432'; 
-$dbname = 'ISMS';
+$dbname = 'I-SMS';
 $user = 'postgres';
 $password = 'postgres'; 
 

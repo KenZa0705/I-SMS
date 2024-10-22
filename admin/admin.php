@@ -78,48 +78,57 @@ $department_id = $_SESSION['user']['department_id'];
                 <!-- main content -->
                 <div class="col-md-6 pt-5 px-5">
                     <div class="feed-container">
-                        <?php
-                        require_once '../login/dbh.inc.php';
-                        // Assuming you have already connected to the database
-                        try {
-                            // Query to get the announcements
-                            $query = "SELECT * FROM announcement ORDER BY updated_at DESC"; // You can modify the ORDER BY as per your requirement
-                            // Prepare and execute the query
+                    <?php
+                    require_once '../login/dbh.inc.php';
 
-                            $query = "SELECT a.*, ad.first_name, ad.last_name 
-                            FROM announcement a 
+                    try {
+                        // Query to get the announcements along with the year level, department, and course
+                        $query = "
+                            SELECT a.*, ad.first_name, ad.last_name,
+                                STRING_AGG(DISTINCT yl.year_level, ', ') AS year_levels,
+                                STRING_AGG(DISTINCT d.department_name, ', ') AS departments,
+                                STRING_AGG(DISTINCT c.course_name, ', ') AS courses
+                            FROM announcement a
                             JOIN admin ad ON a.admin_id = ad.admin_id
-                            ORDER BY updated_at DESC";
+                            LEFT JOIN announcement_year_level ayl ON a.announcement_id = ayl.announcement_id
+                            LEFT JOIN year_level yl ON ayl.year_level_id = yl.year_level_id
+                            LEFT JOIN announcement_department adp ON a.announcement_id = adp.announcement_id
+                            LEFT JOIN department d ON adp.department_id = d.department_id
+                            LEFT JOIN announcement_course ac ON a.announcement_id = ac.announcement_id
+                            LEFT JOIN course c ON ac.course_id = c.course_id
+                            GROUP BY a.announcement_id, ad.first_name, ad.last_name
+                            ORDER BY a.updated_at DESC";
+                        
+                        $stmt = $pdo->prepare($query);
+                        $stmt->execute();
 
-                            $stmt = $pdo->prepare($query);
-                            $stmt->execute();
+                        $announcements = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                        
+                        if ($announcements) {
+                            foreach ($announcements as $row) {
+                                $announcement_id = $row['announcement_id'];
+                                $title = $row['title'];
+                                $description = $row['description'];
+                                $image = $row['image'];
+                                $announcement_admin_id = $row['admin_id'];
+                                $admin_first_name = $row['first_name'];
+                                $admin_last_name = $row['last_name'];
+                                $admin_name =  $admin_first_name . ' ' . $admin_last_name;
+                                $updated_at = date('F d, Y', strtotime($row['updated_at']));
 
-                            // Fetch all the results
-                            $announcements = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                            if ($announcements > 0) {
-                                // Loop through the announcements and display them
-                                foreach ($announcements as $row) {
-                                    $announcement_id = $row['announcement_id'];
-                                    $title = $row['title'];
-                                    $description = $row['description'];
-                                    $image = $row['image'];
-                                    $announcement_admin_id = $row['admin_id'];
-                                    $department = $row['department_id'];
-                                    $year_level = $row['year_level_id'];
-                                    $admin_first_name = $row['first_name'];
-                                    $admin_last_name = $row['last_name'];
-                                    $admin_name =  $admin_first_name . ' ' . $admin_last_name;
-                                    $updated_at = date('F d, Y', strtotime($row['updated_at']));
-                        ?>
+                                $year_levels = $row['year_levels'] ? $row['year_levels'] : 'None';
+                                $departments = $row['departments'] ? $row['departments'] : 'None';
+                                $courses = $row['courses'] ? $row['courses'] : 'None';
+                            ?>
 
 
-                                    <div class="card mb-3">
-                                        <div class="profile-container d-flex px-3 pt-3">
-                                            <div class="profile-pic">
-                                                <img class="img-fluid" src="img/test pic.jpg" alt="">
-                                            </div>
-                                            <p class="ms-1 mt-1"><?php echo htmlspecialchars($admin_name); ?></p>
-                                            <?php if($admin_id === $announcement_admin_id): ?>
+                                <div class="card mb-3">
+                                    <div class="profile-container d-flex px-3 pt-3">
+                                        <div class="profile-pic">
+                                            <img class="img-fluid" src="img/test pic.jpg" alt="">
+                                        </div>
+                                        <p class="ms-1 mt-1"><?php echo htmlspecialchars($admin_name); ?></p>
+                                        <?php if ($admin_id === $announcement_admin_id) : ?>
                                             <div class="dropdown ms-auto">
                                                 <span id="dropdownMenuButton<?php echo $announcement_id; ?>" data-bs-toggle="dropdown" aria-expanded="false">
                                                     <i class="bi bi-three-dots"></i>
@@ -135,34 +144,37 @@ $department_id = $_SESSION['user']['department_id'];
 
                                                 </ul>
                                             </div>
-                                            <?php endif; ?>
-                                        </div>
-
-                                        <div class="image-container mx-3">
-                                            <img src="uploads/<?php echo htmlspecialchars($image); ?>" alt="Post Image" class="img-fluid">
-                                        </div>
-
-                                        <div class="card-body">
-                                            <h5 class="card-title"><?php echo htmlspecialchars($title); ?></h5>
-                                            <p><?php echo htmlspecialchars($description); ?></p>
-                                            <p class="card-text">
-                                                Tags: <?php echo htmlspecialchars($year_level), htmlspecialchars($department); ?>
-                                            </p>
-                                            <small>Updated at <?php echo htmlspecialchars($updated_at); ?></small>
-                                        </div>
+                                        <?php endif; ?>
                                     </div>
 
+                                    <div class="image-container mx-3">
+                                        <img src="uploads/<?php echo htmlspecialchars($image); ?>" alt="Post Image" class="img-fluid">
+                                    </div>
 
-                        <?php
-                                }
-                            } else {
-                                echo '<p>No announcements found.</p>';
+                                    <div class="card-body">
+                                        <h5 class="card-title"><?php echo htmlspecialchars($title); ?></h5>
+                                        <p><?php echo htmlspecialchars($description); ?></p>
+                                        <p class="card-text">
+                                            Tags: <br>
+                                            Year Levels: <br><span class="badge rounded-pill bg-danger"><?php echo htmlspecialchars($year_levels); ?> </span> <br>
+                                            Departments: <br><span class="badge rounded-pill bg-danger"><?php echo htmlspecialchars($departments); ?> </span><br>
+                                            Courses: <br><span class="badge rounded-pill bg-danger"><?php echo htmlspecialchars($courses); ?> </span><br>
+                                        </p>
+                                        <small>Updated at <?php echo htmlspecialchars($updated_at); ?></small>
+                                    </div>
+                                </div>
+
+                            <?php
                             }
-                        } catch (PDOException $e) {
-                            // Handle any errors that occur during query execution
-                            echo "Error: " . $e->getMessage();
+                        } else {
+                            echo '<p>No announcements found.</p>';
                         }
-                        ?>
+                    } catch (PDOException $e) {
+                        // Handle any errors that occur during query execution
+                        echo "Error: " . $e->getMessage();
+                    }
+                    ?>
+
                     </div>
                 </div>
 

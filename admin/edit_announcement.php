@@ -51,26 +51,108 @@ $department_id = $_SESSION['user']['department_id'];
                     if (isset($_GET['id'])) {
                         $announcement_id = $_GET['id'];
 
-                        // Fetch existing announcement data
-                        $query = "SELECT * FROM announcement WHERE announcement_id = :id";
+                        // Fetch selected year levels, departments, and courses
+                        $query = "
+                        SELECT a.*, 
+                            STRING_AGG(DISTINCT yl.year_level_id::TEXT, ',') AS selected_year_levels, 
+                            STRING_AGG(DISTINCT d.department_id::TEXT, ',') AS selected_departments, 
+                            STRING_AGG(DISTINCT c.course_id::TEXT, ',') AS selected_courses 
+                        FROM announcement a
+                        LEFT JOIN announcement_year_level ayl ON a.announcement_id = ayl.announcement_id
+                        LEFT JOIN year_level yl ON ayl.year_level_id = yl.year_level_id
+                        LEFT JOIN announcement_department adp ON a.announcement_id = adp.announcement_id
+                        LEFT JOIN department d ON adp.department_id = d.department_id
+                        LEFT JOIN announcement_course ac ON a.announcement_id = ac.announcement_id
+                        LEFT JOIN course c ON ac.course_id = c.course_id
+                        WHERE a.announcement_id = :id
+                        GROUP BY a.announcement_id";
                         $stmt = $pdo->prepare($query);
                         $stmt->bindParam(':id', $announcement_id, PDO::PARAM_INT);
                         $stmt->execute();
                         $announcement = $stmt->fetch(PDO::FETCH_ASSOC);
 
+                        // Fetch all year levels
+                        $year_level_query = "SELECT * FROM year_level";
+                        $year_level_stmt = $pdo->prepare($year_level_query);
+                        $year_level_stmt->execute();
+                        $year_levels = $year_level_stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                        // Fetch all departments
+                        $department_query = "SELECT * FROM department";
+                        $department_stmt = $pdo->prepare($department_query);
+                        $department_stmt->execute();
+                        $departments = $department_stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                        // Fetch all courses
+                        $course_query = "SELECT * FROM course";
+                        $course_stmt = $pdo->prepare($course_query);
+                        $course_stmt->execute();
+                        $courses = $course_stmt->fetchAll(PDO::FETCH_ASSOC);
+
                         if ($announcement) {
                             $title = $announcement['title'];
                             $description = $announcement['description'];
                             $image = $announcement['image'];
-                            $department_id = $announcement['department_id'];
-                            $year_level_id = $announcement['year_level_id'];
+
+                            
+
 
                             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 $new_title = $_POST['title'];
                                 $new_description = $_POST['description'];
-                                $new_department_id = $_POST['department'];
-                                $new_year_level_id = $_POST['year_level'];
+                                $new_year_levels = $_POST['year_level'] ?? [];
+                                $new_departments = $_POST['department'] ?? [];
+                                $new_courses = $_POST['course'] ?? [];
 
+                                // Update the announcement table
+                                $update_query = "UPDATE announcement SET title = :title, description = :description, updated_at = NOW() WHERE announcement_id = :id";
+                                $stmt = $pdo->prepare($update_query);
+                                $stmt->bindParam(':title', $new_title);
+                                $stmt->bindParam(':description', $new_description);
+                                $stmt->bindParam(':id', $announcement_id);
+                                $stmt->execute();
+
+                                // Update the year levels
+                                $delete_query = "DELETE FROM announcement_year_level WHERE announcement_id = :id";
+                                $stmt = $pdo->prepare($delete_query);
+                                $stmt->bindParam(':id', $announcement_id);
+                                $stmt->execute();
+
+                                foreach ($new_year_levels as $year_level_id) {
+                                    $insert_query = "INSERT INTO announcement_year_level (announcement_id, year_level_id) VALUES (:announcement_id, :year_level_id)";
+                                    $stmt = $pdo->prepare($insert_query);
+                                    $stmt->bindParam(':announcement_id', $announcement_id);
+                                    $stmt->bindParam(':year_level_id', $year_level_id);
+                                    $stmt->execute();
+                                }
+
+                                // Update the department 
+                                $delete_query = "DELETE FROM announcement_department WHERE announcement_id = :id";
+                                $stmt = $pdo->prepare($delete_query);
+                                $stmt->bindParam(':id', $announcement_id);
+                                $stmt->execute();
+
+                                foreach ($new_departments as $new_department_id) {
+                                    $insert_query = "INSERT INTO announcement_department (announcement_id, department_id) VALUES (:announcement_id, :department_id)";
+                                    $stmt = $pdo->prepare($insert_query);
+                                    $stmt->bindParam(':announcement_id', $announcement_id);
+                                    $stmt->bindParam(':department_id', $new_department_id);
+                                    $stmt->execute();
+                                }
+
+                                // Update the year levels
+                                $delete_query = "DELETE FROM announcement_course WHERE announcement_id = :id";
+                                $stmt = $pdo->prepare($delete_query);
+                                $stmt->bindParam(':id', $announcement_id);
+                                $stmt->execute();
+
+                                foreach ($new_courses as $new_courses_id) {
+                                    $insert_query = "INSERT INTO announcement_course (announcement_id, course_id) VALUES (:announcement_id, :course_id)";
+                                    $stmt = $pdo->prepare($insert_query);
+                                    $stmt->bindParam(':announcement_id', $announcement_id);
+                                    $stmt->bindParam(':course_id', $new_courses_id);
+                                    $stmt->execute();
+                                }
                                 // Handle image upload
                                 if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
                                     $image_tmp_name = $_FILES['image']['tmp_name'];
@@ -96,13 +178,11 @@ $department_id = $_SESSION['user']['department_id'];
 
 
                                 // Update the announcement
-                                $update_query = "UPDATE announcement SET title = :title, description = :description, image = :image, department_id = :department, year_level_id = :year_level, updated_at = NOW() WHERE announcement_id = :id";
+                                $update_query = "UPDATE announcement SET title = :title, description = :description, image = :image, updated_at = NOW() WHERE announcement_id = :id";
                                 $stmt = $pdo->prepare($update_query);
                                 $stmt->bindParam(':title', $new_title);
                                 $stmt->bindParam(':description', $new_description);
                                 $stmt->bindParam(':image', $new_image);
-                                $stmt->bindParam(':department', $new_department_id);
-                                $stmt->bindParam(':year_level', $new_year_level_id);
                                 $stmt->bindParam(':id', $announcement_id);
 
                                 if ($stmt->execute()) {
@@ -134,12 +214,42 @@ $department_id = $_SESSION['user']['department_id'];
                                 <textarea class="form-control custom-class py-3 px-3" id="description" name="description" rows="5" required><?php echo htmlspecialchars($description); ?></textarea>
                             </div>
                             <div class="form-group mb-3">
-                                <label for="department">Department</label>
-                                <input type="text" class="form-control" id="department" name="department" value="<?php echo htmlspecialchars($department_id); ?>" required>
+                                <label for="year_level">Year Levels</label><br>
+                                <?php foreach ($year_levels as $year_level): ?>
+                                    <div class="form-check form-check-inline">
+                                        <input type="checkbox" class="form-check-input" id="year_level_<?php echo $year_level['year_level_id']; ?>" name="year_level[]" value="<?php echo $year_level['year_level_id']; ?>" 
+                                            <?php if (in_array($year_level['year_level_id'], explode(',', $announcement['selected_year_levels']))) echo 'checked'; ?>>
+                                        <label class="form-check-label" for="year_level_<?php echo $year_level['year_level_id']; ?>">
+                                            <?php echo htmlspecialchars($year_level['year_level']); ?>
+                                        </label>
+                                    </div>
+                                <?php endforeach; ?>
                             </div>
+
                             <div class="form-group mb-3">
-                                <label for="year_level">Year Level</label>
-                                <input type="text" class="form-control" id="year_level" name="year_level" value="<?php echo htmlspecialchars($year_level_id); ?>" required>
+                                <label for="department">Departments</label><br>
+                                <?php foreach ($departments as $department): ?>
+                                    <div class="form-check form-check-inline">
+                                        <input type="checkbox" class="form-check-input" id="department_<?php echo $department['department_id']; ?>" name="department[]" value="<?php echo $department['department_id']; ?>" 
+                                            <?php if (in_array($department['department_id'], explode(',', $announcement['selected_departments']))) echo 'checked'; ?>>
+                                        <label class="form-check-label" for="department_<?php echo $department['department_id']; ?>">
+                                            <?php echo htmlspecialchars($department['department_name']); ?>
+                                        </label>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label for="course">Courses</label><br>
+                                <?php foreach ($courses as $course): ?>
+                                    <div class="form-check form-check-inline">
+                                        <input type="checkbox" class="form-check-input" id="course_<?php echo $course['course_id']; ?>" name="course[]" value="<?php echo $course['course_id']; ?>" 
+                                            <?php if (in_array($course['course_id'], explode(',', $announcement['selected_courses']))) echo 'checked'; ?>>
+                                        <label class="form-check-label" for="course_<?php echo $course['course_id']; ?>">
+                                            <?php echo htmlspecialchars($course['course_name']); ?>
+                                        </label>
+                                    </div>
+                                <?php endforeach; ?>
                             </div>
                             <div class="form-group mb-3">
                                 <div class="upload-image-container d-flex flex-column align-items-center justify-content-center bg-white">
