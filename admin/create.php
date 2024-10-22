@@ -68,9 +68,50 @@ $department_id = $_SESSION['user']['department_id'];
                                 </div>
                             </div>
                         </div>
+                        <div class="form-group mb-3">
+                            <fieldset>
+                                <legend>Year Level</legend>
+                                <label for="1st Year"><input type="checkbox" class="form-control title py-3 px-3" id="1st Year" name="1st Year">1st Year</label>
+                                <label for="2nd Year"><input type="checkbox" class="form-control title py-3 px-3" id="2nd Year" name="2nd Year">2nd Year</label>
+                                <label for="3rd Year"><input type="checkbox" class="form-control title py-3 px-3" id="3rd Year" name="3rd Year">3rd Year</label>
+                                <label for="4th Year"><input type="checkbox" class="form-control title py-3 px-3" id="4th Year" name="4th Year">4th Year</label>
+                            </fieldset>
+                        </div>
+                        <div class="form-group mb-3">
+                            <fieldset>
+                                <legend>Departments</legend>
+                                <label for="CICS"><input type="checkbox" class="form-control title py-3 px-3" id="CICS" name="CICS">CICS</label>
+                                <label for="CABE"><input type="checkbox" class="form-control title py-3 px-3" id="CABE" name="CABE">CABE</label>
+                                <label for="CAS"><input type="checkbox" class="form-control title py-3 px-3" id="CAS" name="CAS">CAS</label>
+                                <label for="CIT"><input type="checkbox" class="form-control title py-3 px-3" id="CIT" name="CIT">CIT</label>
+                                <label for="CTE"><input type="checkbox" class="form-control title py-3 px-3" id="CTE" name="CTE">CTE</label>
+                                <label for="CE"><input type="checkbox" class="form-control title py-3 px-3" id="CE" name="CE">CE</label>
+                            </fieldset>
+                        </div>
+                        <div class="form-group mb-3">
+                        <fieldset>
+                                <legend>Courses</legend>
+                                <label for="BSBA"><input type="checkbox" class="form-control title py-3 px-3" id="BSBA" name="BSBA">Bachelor of Science in Business Accounting</label>
+                                <label for="BSMA"><input type="checkbox" class="form-control title py-3 px-3" id="BSMA" name="BSMA">Bachelor of Science in Management Accounting</label>
+                                <label for="BSP"><input type="checkbox" class="form-control title py-3 px-3" id="BSP" name="BSP">Bachelor of Science in Psychology</label>
+                                <label for="BAC"><input type="checkbox" class="form-control title py-3 px-3" id="BAC" name="BAC">Bachelor of Arts in Communication</label>
+                                <label for="BSIE"><input type="checkbox" class="form-control title py-3 px-3" id="BSIE" name="BSIE">Bachelor of Science in Industrial Engineering</label>
+                                <label for="BSIT-CE"><input type="checkbox" class="form-control title py-3 px-3" id="BSIT-CE" name="BSIT-CE">Bachelor of Industrial Technology - Computer Technology</label>
+                                <label for="BSIT-Electrical">
+                                    <input type="checkbox" class="form-control title py-3 px-3" id="BSIT-Electrical" name="BSIT-Electrical">Bachelor of Industrial Technology - Electrical Technology</label>
+                                <label for="BSIT-Electronic">
+                                    <input type="checkbox" class="form-control title py-3 px-3" id="BSIT-Electronic" name="BSIT-Electronic">Bachelor of Industrial Technology - Electronics Technology</label>
+                                <label for="BSIT-ICT">
+                                    <input type="checkbox" class="form-control title py-3 px-3" id="BSIT-ICT" name="BSIT-ICT">Bachelor of Industrial Technology - Instrumentation and Control Technology</label>
+                                <label for="BSIT">
+                                    <input type="checkbox" class="form-control title py-3 px-3" id="BSIT" name="BSIT">Bachelor of Science in Information Technology</label>
+                                <label for="BSE">
+                                    <input type="checkbox" class="form-control title py-3 px-3" id="BSE" name="BSE">Bachelor of Secondary Education</label>
+                            </fieldset>
+                        </div>
 
                         <div class="button-container d-flex justify-content-end">
-                            <button type="submit" class="btn btn-primary px-3">Post</button>
+                            <button type="submit" class="btn btn-primary px-3 mb-3">Post</button>
                         </div>
                     </form>
 

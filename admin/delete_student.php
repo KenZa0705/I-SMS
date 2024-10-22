@@ -6,28 +6,28 @@ if (isset($_GET['id'])) {
     $student_id = $_GET['id'];
     // Perform the deletion
     try {
-        $query = "DELETE FROM announcement WHERE announcement_id = :id";
+        $query = "DELETE FROM student WHERE student_id = :id";
         $stmt = $pdo->prepare($query);
-        $stmt->bindParam(':id', $announcement_id, PDO::PARAM_INT);
+        $stmt->bindParam(':id', $student_id, PDO::PARAM_INT);
         if ($stmt->execute()) {
             echo "<script>
-            window.location.href = 'admin.php?deleted=true';
+            window.location.href = 'manage_student.php?deleted=true';
                 </script>";
         } else {
             echo "<script>
-                alert('There was an error in deleting the announcement.');
-                window.location.href = 'admin.php';
+                alert('There was an error in deleting the student data.');
+                window.location.href = 'manage_student.php';
                 </script>";
         }
     } catch (PDOException $e) {
         echo "<script>
             alert('Error: " . $e->getMessage() . "');
-            window.location.href = 'admin.php';
+            window.location.href = 'manage_student.php';
             </script>";
     }
 } else {
     echo "<script>
-        alert('No announcement ID provided.');
-        window.location.href = 'admin.php';
+        alert('No student ID provided.');
+        window.location.href = 'manage_student.php';
         </script>";
 }

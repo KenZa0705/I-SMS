@@ -1,5 +1,9 @@
 <?php
 require_once '../login/dbh.inc.php'; // DATABASE CONNECTION
+require 'vendor/autoload.php';
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
 session_start();
 if (!isset($_SESSION['user'])) {
     header("Location: ../login/login.php");
@@ -79,7 +83,29 @@ function addNewStudent($s_first_name, $s_last_name, $s_email, $s_contact_number,
     $stmt->bindParam(':course', $s_course);
     
     if ($stmt->execute()) {
+        $mail = new PHPMailer(true);
+        //Server settings
+        $mail->isSMTP();                                 // Set mailer to use SMTP
+        $mail->Host = 'smtp.gmail.com';                  // Specify main SMTP server
+        $mail->SMTPAuth = true;                          // Enable SMTP authentication
+        $mail->Username = 'ranonline1219@gmail.com';        // SMTP username
+        $mail->Password = 'cavv jhhh onzy rwiu';         // SMTP password or app password
+        $mail->SMTPSecure = 'tls';                       // Enable TLS encryption, `ssl` also accepted
+        $mail->Port = 587;                               // TCP port to connect to
+
+        //Recipients
+        $mail->setFrom('ranonline1219@gmail.com', 'ISMS - BSU Announcement Portal');
+        $mail->addAddress($s_email);                       // Add recipient
+
+        //Content
+        $mail->isHTML(true);                             // Set email format to HTML
+        $mail->Subject = 'Your Account for the ISMS Portal was created successfully';
+        $mail->Body    = "Your account was created successfully. \n To proceed with the setup, click on the link below to setup your password.\n
+                        Link: localhost:link in password reset";
+
+        $mail->send();
         echo "<script>alert('New student added successfully!');</script>";
+        
     } else {
         echo "<script>alert('Error: Could not add student.');</script>";
     }
@@ -310,7 +336,7 @@ function addNewStudent($s_first_name, $s_last_name, $s_email, $s_contact_number,
                     <div class="modal-dialog modal-md">
                         <div class="modal-content delete-message">
                             <div class="modal-header" style="border: none;">
-                                <p class="modal-title" id="exampleModalLabel">Announcement deleted succesfully.</p>
+                                <p class="modal-title" id="exampleModalLabel">Student record was deleted succesfully.</p>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                         </div>
