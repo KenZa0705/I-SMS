@@ -94,7 +94,7 @@ $department_id = $_SESSION['user']['department_id'];
                             $description = $announcement['description'];
                             $image = $announcement['image'];
 
-                            
+
 
 
                             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -204,71 +204,100 @@ $department_id = $_SESSION['user']['department_id'];
 
                     <!-- Form to edit the announcement -->
                     <?php if ($announcement): ?>
-                        <form action="" method="POST" enctype="multipart/form-data">
-                            <div class="form-group mb-3">
-                                <label for="title">Title</label>
-                                <input type="text" class="form-control title py-3 px-3" id="title" name="title" value="<?php echo htmlspecialchars($title); ?>" required>
-                            </div>
-                            <div class="form-group mb-3">
-                                <label for="description">Description</label>
-                                <textarea class="form-control custom-class py-3 px-3" id="description" name="description" rows="5" required><?php echo htmlspecialchars($description); ?></textarea>
-                            </div>
-                            <div class="form-group mb-3">
-                                <label for="year_level">Year Levels</label><br>
-                                <?php foreach ($year_levels as $year_level): ?>
-                                    <div class="form-check form-check-inline">
-                                        <input type="checkbox" class="form-check-input" id="year_level_<?php echo $year_level['year_level_id']; ?>" name="year_level[]" value="<?php echo $year_level['year_level_id']; ?>" 
-                                            <?php if (in_array($year_level['year_level_id'], explode(',', $announcement['selected_year_levels']))) echo 'checked'; ?>>
-                                        <label class="form-check-label" for="year_level_<?php echo $year_level['year_level_id']; ?>">
-                                            <?php echo htmlspecialchars($year_level['year_level']); ?>
-                                        </label>
-                                    </div>
-                                <?php endforeach; ?>
-                            </div>
+                        <div class="form-container d-flex justify-content-center">
+                            <form action="" method="POST" enctype="multipart/form-data">
+                                <div class="form-group mb-3">
+                                    <label for="title">Title</label>
+                                    <input type="text" class="form-control title py-3 px-3" id="title" name="title" value="<?php echo htmlspecialchars($title); ?>" required>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="description">Description</label>
+                                    <textarea class="form-control custom-class py-3 px-3" id="description" name="description" rows="5" required><?php echo htmlspecialchars($description); ?></textarea>
+                                </div>
+                                <!-- Button to trigger the modal -->
+                                <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#tagsModal">
+                                    Tags
+                                </button>
 
-                            <div class="form-group mb-3">
-                                <label for="department">Departments</label><br>
-                                <?php foreach ($departments as $department): ?>
-                                    <div class="form-check form-check-inline">
-                                        <input type="checkbox" class="form-check-input" id="department_<?php echo $department['department_id']; ?>" name="department[]" value="<?php echo $department['department_id']; ?>" 
-                                            <?php if (in_array($department['department_id'], explode(',', $announcement['selected_departments']))) echo 'checked'; ?>>
-                                        <label class="form-check-label" for="department_<?php echo $department['department_id']; ?>">
-                                            <?php echo htmlspecialchars($department['department_name']); ?>
-                                        </label>
-                                    </div>
-                                <?php endforeach; ?>
-                            </div>
+                                <!-- Modal -->
+                                <div class="modal fade" id="tagsModal" tabindex="-1" aria-labelledby="tagsModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="tagsModalLabel">Select Year Levels, Departments, and Courses</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <!-- Year Levels -->
+                                                <div class="form-group mb-3">
+                                                    <label for="year_level">Year Levels</label><br>
+                                                    <?php foreach ($year_levels as $year_level): ?>
+                                                        <div class="form-check form-check-inline">
+                                                            <input type="checkbox" class="form-check-input" id="year_level_<?php echo $year_level['year_level_id']; ?>" name="year_level[]" value="<?php echo $year_level['year_level_id']; ?>"
+                                                                <?php if (in_array($year_level['year_level_id'], explode(',', $announcement['selected_year_levels']))) echo 'checked'; ?>>
+                                                            <label class="form-check-label" for="year_level_<?php echo $year_level['year_level_id']; ?>">
+                                                                <?php echo htmlspecialchars($year_level['year_level']); ?>
+                                                            </label>
+                                                        </div>
+                                                    <?php endforeach; ?>
+                                                </div>
 
-                            <div class="form-group mb-3">
-                                <label for="course">Courses</label><br>
-                                <?php foreach ($courses as $course): ?>
-                                    <div class="form-check form-check-inline">
-                                        <input type="checkbox" class="form-check-input" id="course_<?php echo $course['course_id']; ?>" name="course[]" value="<?php echo $course['course_id']; ?>" 
-                                            <?php if (in_array($course['course_id'], explode(',', $announcement['selected_courses']))) echo 'checked'; ?>>
-                                        <label class="form-check-label" for="course_<?php echo $course['course_id']; ?>">
-                                            <?php echo htmlspecialchars($course['course_name']); ?>
-                                        </label>
-                                    </div>
-                                <?php endforeach; ?>
-                            </div>
-                            <div class="form-group mb-3">
-                                <div class="upload-image-container d-flex flex-column align-items-center justify-content-center bg-white">
-                                    <div class="d-flex">
-                                        <p id="upload-text" class="mt-3">Upload Photo</p>
-                                        <input type="file" class="form-control-file" id="image" name="image" style="display: none;" onchange="imagePreview()">
-                                        <button class="btn btn-light" id="file-upload-btn">
-                                            <i class="bi bi-upload"></i>
-                                        </button>
-                                        <img id="image-preview" src="uploads/<?php echo htmlspecialchars($image); ?>" alt="Image Preview" style="display: block; max-width: 100%; margin:0;">
-                                        <i id="delete-icon" class="bi bi-trash" style="position: absolute; top: 5px; right: 5px; display: block; cursor: pointer;" onclick="deleteImage()"></i>
+                                                <!-- Departments -->
+                                                <div class="form-group mb-3">
+                                                    <label for="department">Departments</label><br>
+                                                    <?php foreach ($departments as $department): ?>
+                                                        <div class="form-check form-check-inline">
+                                                            <input type="checkbox" class="form-check-input" id="department_<?php echo $department['department_id']; ?>" name="department[]" value="<?php echo $department['department_id']; ?>"
+                                                                <?php if (in_array($department['department_id'], explode(',', $announcement['selected_departments']))) echo 'checked'; ?>>
+                                                            <label class="form-check-label" for="department_<?php echo $department['department_id']; ?>">
+                                                                <?php echo htmlspecialchars($department['department_name']); ?>
+                                                            </label>
+                                                        </div>
+                                                    <?php endforeach; ?>
+                                                </div>
+
+                                                <!-- Courses -->
+                                                <div class="form-group mb-3">
+                                                    <label for="course">Courses</label><br>
+                                                    <?php foreach ($courses as $course): ?>
+                                                        <div class="form-check form-check-inline">
+                                                            <input type="checkbox" class="form-check-input" id="course_<?php echo $course['course_id']; ?>" name="course[]" value="<?php echo $course['course_id']; ?>"
+                                                                <?php if (in_array($course['course_id'], explode(',', $announcement['selected_courses']))) echo 'checked'; ?>>
+                                                            <label class="form-check-label" for="course_<?php echo $course['course_id']; ?>">
+                                                                <?php echo htmlspecialchars($course['course_name']); ?>
+                                                            </label>
+                                                        </div>
+                                                    <?php endforeach; ?>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div class="button-container d-flex justify-content-end">
-                                <button type="submit" class="btn btn-primary px-3">Update</button>
-                            </div>
-                        </form>
+                                <div class="form-group mb-3">
+                                    <div class="upload-image-container d-flex flex-column align-items-center justify-content-center bg-white">
+                                        <div class="d-flex">
+                                            <p id="upload-text" class="mt-3">Upload Photo</p>
+                                            <input type="file" class="form-control-file" id="image" name="image" style="display: none;" onchange="imagePreview()">
+                                            <button class="btn btn-light" id="file-upload-btn">
+                                                <i class="bi bi-upload"></i>
+                                            </button>
+                                            <img id="image-preview" src="uploads/<?php echo htmlspecialchars($image); ?>" alt="Image Preview" style="display: block; max-width: 100%; margin:0;">
+                                        </div>
+                                        <div class="blur-background" style="display: none;"></div>
+                                        <i id="delete-icon" class="bi bi-trash" style="position: absolute; top: 5px; right: 5px; display: none; cursor: pointer;" onclick="deleteImage()"></i>
+                                    </div>
+                                </div>
+
+                                <div class="button-container d-flex justify-content-end">
+                                    <button type="submit" class="btn btn-primary px-3">Update</button>
+                                </div>
+                            </form>
+                        </div>
+
                     <?php endif; ?>
                 </div>
             </div>

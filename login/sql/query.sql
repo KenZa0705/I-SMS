@@ -163,4 +163,21 @@ ALTER TABLE IF EXISTS public.logs
     ON UPDATE NO ACTION
     ON DELETE SET NULL; -- If the student is deleted, the log entry will not be removed
 
+CREATE TABLE IF NOT EXISTS public.sms_log (
+    sms_log_id serial NOT NULL,
+    announcement_id integer NOT NULL,
+    student_id integer NOT NULL,
+    status varchar(20) NOT NULL,
+    sent_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT sms_log_pkey PRIMARY KEY (sms_log_id),
+    CONSTRAINT sms_log_announcement_id_fkey FOREIGN KEY (announcement_id)
+        REFERENCES public.announcement (announcement_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE,
+    CONSTRAINT sms_log_student_id_fkey FOREIGN KEY (student_id)
+        REFERENCES public.student (student_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE
+);
+
 END;

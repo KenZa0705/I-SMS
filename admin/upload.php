@@ -1,6 +1,7 @@
 <?php
-// Database configuration
+// announcement_handler.php
 require_once '../login/dbh.inc.php';
+require_once 'sms_functions.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Check if an image was uploaded
@@ -19,7 +20,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (!empty($admin_id) && filter_var($admin_id, FILTER_VALIDATE_INT)) {
             // Define the upload directory
             $uploadDir = 'uploads/';
-            // Create the directory if it doesn't exist
             if (!is_dir($uploadDir)) {
                 mkdir($uploadDir, 0777, true);
             }
@@ -28,26 +28,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $ext = pathinfo($image['name'], PATHINFO_EXTENSION);
             $allowedExt = ['jpg', 'jpeg', 'png', 'gif'];
 
-            // Check if the file extension is allowed
             if (in_array(strtolower($ext), $allowedExt)) {
-                // Create a unique filename
                 $filename = uniqid('', true) . '.' . $ext;
                 $uploadFilePath = $uploadDir . $filename;
 
-                // Move the uploaded file to the upload directory
                 if (move_uploaded_file($image['tmp_name'], $uploadFilePath)) {
                     try {
-                        // Insert the file details into the database using PDO
-                        $stmt = $pdo->prepare("INSERT INTO announcement (image, description, title, admin_id) VALUES (:filename, :description, :title, :admin_id)");
+                        // Start transaction
+                        $pdo->beginTransaction();
+
+                        // Create message for SMS (first 250 characters of description)
+                        $message = substr($description, 0, 250);
+
+                        // Insert announcement
+                        $stmt = $pdo->prepare("INSERT INTO announcement (image, description, title, admin_id, message) 
+                                             VALUES (:filename, :description, :title, :admin_id, :message)");
+                        
                         $stmt->bindParam(':filename', $filename);
                         $stmt->bindParam(':description', $description);
                         $stmt->bindParam(':title', $title);
-                        $stmt->bindParam(':admin_id', $admin_id, PDO::PARAM_INT); // Ensure admin_id is bound as an integer
+                        $stmt->bindParam(':admin_id', $admin_id, PDO::PARAM_INT);
+                        $stmt->bindParam(':message', $message);
 
                         if ($stmt->execute()) {
-                            // Get the ID of the last inserted announcement
                             $announcement_id = $pdo->lastInsertId();
 
+                            // Insert all the relationships (your existing code for year_levels, departments, and courses)
+                            // ... (keep your existing relationship insertion code here)
                             // Function to get the corresponding ID from a table based on a name field
                             function getIdByName($pdo, $table, $column, $value, $id) {
                                 $sql = "SELECT $id FROM $table WHERE $column = ?";
@@ -85,28 +92,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     $stmt->execute([$announcement_id, $course_id]);
                                 }
                             }
+                            // If tags were selected, send SMS
+                            if (!empty($year_levels) && !empty($departments) && !empty($courses)) {
+                                $students = getStudentsForAnnouncement($pdo, $announcement_id, $year_levels, $departments, $courses);
+                                $smsResults = sendSMSToStudents($pdo, $announcement_id, $students, $title, $message);
+                            }
 
-                            echo "<script>
-                            window.location.href = 'admin.php';
-                                </script>";
+                            $pdo->commit();
+                            
+                            echo "<script>window.location.href = 'admin.php';</script>";
                         } else {
-                            echo "Failed to save details to database.";
+                            throw new Exception("Failed to save announcement details.");
                         }
-                    } catch (PDOException $e) {
-                        echo "Database error: " . $e->getMessage();
+                    } catch (Exception $e) {
+                        $pdo->rollBack();
+                        error_log("Error in announcement creation: " . $e->getMessage());
+                        echo "An error occurred while creating the announcement.";
                     }
                 } else {
-                    echo "Failed to move uploaded file.";
+                    echo "Failed to upload image.";
                 }
             } else {
-                echo "Invalid file extension.";
+                echo "Invalid image format.";
             }
         } else {
             echo "Invalid admin ID.";
         }
     } else {
-        echo "No file uploaded or there was an upload error.";
+        echo "No image uploaded.";
     }
-} else {
-    echo "Invalid request.";
 }

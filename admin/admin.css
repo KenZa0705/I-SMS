@@ -23,6 +23,7 @@ body {
     margin-left: 10px;
 }
 
+
 .filtered_option select{
     border-radius: 12px;
 }
@@ -111,6 +112,27 @@ body {
     border-radius: 15px;
 }
 
+.nav-bottom{
+    background-color: rgba(255, 255, 255);
+}
+
+.nav-bottom-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+}
+
+.nav-bottom-btn i {
+    font-size: 17px;
+}
+
+.icon-label {
+    font-size: 12px;
+    margin-top: 5px;
+    text-align: center;
+}
+
 
 
 @media (max-width: 992px) {
@@ -120,6 +142,9 @@ body {
 }
 
 @media (max-width: 768px) {
+    .main-content{
+        margin-bottom: 85px !important;
+    }
     .feed-container .card {
       width: 100%;
     }

@@ -10,18 +10,44 @@ document.addEventListener("DOMContentLoaded", function () {
             seeMoreLink.href = "#";
             seeMoreLink.textContent = "See more";
             seeMoreLink.style.textDecoration = "none";
-            seeMoreLink.style.color = "black"
+            seeMoreLink.style.color = "black";
 
             body.textContent = truncatedText;
             body.appendChild(seeMoreLink);
 
+            let isExpanded = false;
+
             seeMoreLink.addEventListener("click", function (event) {
                 event.preventDefault();
-                body.textContent = fullText;
+                if (!isExpanded) {
+                    body.textContent = fullText;
+
+                    // Create the "See Less" link
+                    const seeLessLink = document.createElement("a");
+                    seeLessLink.href = "#";
+                    seeLessLink.textContent = " ...See less";
+                    seeLessLink.style.textDecoration = "none";
+                    seeLessLink.style.color = "black";
+
+                    body.appendChild(seeLessLink);
+
+                    // Update the flag
+                    isExpanded = true;
+
+                    seeLessLink.addEventListener("click", function (event) {
+                        event.preventDefault();
+                        body.textContent = truncatedText; // Collapse back to truncated text
+                        body.appendChild(seeMoreLink); // Re-add "See more" link
+
+                        // Reset the flag
+                        isExpanded = false;
+                    });
+                }
             });
         }
     });
 });
+
 
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -49,6 +75,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const newUrl = window.location.pathname;
             window.history.replaceState(null, '', newUrl);
+
+            window.location.reload();
         }, 2000);
     }
 });

@@ -23,6 +23,11 @@ body {
     margin-left: 10px;
 }
 
+.profile-container img{
+    max-height: 30px !important;
+    border-radius: 15px;
+}
+
 .form-control{
     border-radius: 24px !important;
 }

@@ -17,16 +17,16 @@
     <main>
         <div class="main_bg">
             <section class="header_container bg-white">
-                <div class="container-fluid">
+                <div class="container">
                     <div class="row">
-                        <div class="col-3 d-flex justify-content-center align-items-center">
-                            <img src="pics/bsu_logo.png" alt="" class="img-fluid me-3">
+                        <div class="col-3 d-flex justify-content-start">
+                            <img src="pics/brand.png" alt="" class="img-fluid">
                         </div>
                         <div class="col-6 d-flex justify-content-center align-items-center">
                             <h1 class="text-center">ANNOUNCEMENTS</h1>
                         </div>
-                        <div class="col-3 d-flex justify-content-center align-items-center">
-                            <img src="pics/bsu_logo.png" alt="" class="img-fluid ms-3">
+                        <div class="col-3 d-flex justify-content-end">
+                            <img src="pics/bsu_logo.png" alt="" class="img-fluid">
                         </div>
                     </div>
                 </div>
@@ -35,8 +35,8 @@
             <section class="login_container py-5 px-4 d-flex justify-content-center align-items-center">
                 <div class="container">
                     <div class="row d-flex justify-content-center align-items-center">
-                        <div class="form-container col-12 col-md-6 bg-body-tertiary p-4">
-                            <h2 class="text-center">Faculty Login</h2>
+                        <div class="form-container col-12 col-md-5 bg-body-tertiary p-4">
+                            <h2 class="text-center">Login</h2>
                             <div class="form-body p-2">
                                 <form id="login_form" action="login_script.php" method="POST">
                                     <div class="form-group mb-3">
@@ -88,8 +88,8 @@
                             <p class="copyright">Copyright &copy; 2023</p>
                         </div>
                         <div class="col-4">
-                            <div class="img-container d-flex justify-content-center align-items-center">
-                                <img class="img-fluid red_spartan d-flex align-items-center justify-content-center" src="pics/red spartan.png" alt="">
+                            <div class="img-container d-flex justify-content-end align-items-center">
+                                <img class="img-fluid" src="pics/redspartan-logo.png" alt="">
                             </div>
                         </div>
                     </div>

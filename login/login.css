@@ -12,10 +12,11 @@ html, body {
 .main_bg {
     height: 100vh;
     background-image: url(pics/main-bg.png);
-    background-position: center -180px;
+    background-position: center;
     background-repeat: no-repeat;
     display: flex;
     flex-direction: column;
+    background-size: 100% 100%;
 }
 
 .header_container {

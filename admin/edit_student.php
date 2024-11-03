@@ -80,11 +80,11 @@ $department_id = $_SESSION['user']['department_id'];
                                 $s_dept_id = $pdo->prepare("SELECT department_id FROM department WHERE department_name = :dname");
                                 $s_dept_id->execute([':dname' => $_POST['department']]);
                                 $s_dept = (int)$s_dept_id->fetchColumn();
-                            
+
                                 $s_course_id = $pdo->prepare("SELECT course_id FROM course WHERE course_name = :cname");
                                 $s_course_id->execute([':cname' => $_POST['course']]);
                                 $s_course = (int)$s_course_id->fetchColumn();
-                                
+
                                 if ($s_year && $s_dept && $s_course) {
                                     addNewStudent($s_first_name, $s_last_name, $s_email, $s_contact_number, $s_year, $s_dept, $s_course);
                                 } else {
@@ -175,8 +175,8 @@ $department_id = $_SESSION['user']['department_id'];
                                     <option value="BSE">Bachelor of Secondary Education</option>
                                 </select>
                             </div>
-                                <button type="submit" class="btn btn-primary" form="addStudentForm">Update Student Record</button>
-                            </form>
+                            <button type="submit" class="btn btn-primary" form="addStudentForm">Update Student Record</button>
+                        </form>
                     <?php endif; ?>
                 </div>
             </div>
