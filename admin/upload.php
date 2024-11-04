@@ -1,7 +1,13 @@
 <?php
-// announcement_handler.php
+// Database configuration
 require_once '../login/dbh.inc.php';
-require_once 'sms_functions.php';
+require __DIR__ . "/vendor/autoload.php";
+
+use Infobip\Configuration;
+use Infobip\Api\SmsApi;
+use Infobip\Model\SmsDestination;
+use Infobip\Model\SmsTextualMessage;
+use Infobip\Model\SmsAdvancedTextualRequest;
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Check if an image was uploaded
@@ -20,6 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (!empty($admin_id) && filter_var($admin_id, FILTER_VALIDATE_INT)) {
             // Define the upload directory
             $uploadDir = 'uploads/';
+            // Create the directory if it doesn't exist
             if (!is_dir($uploadDir)) {
                 mkdir($uploadDir, 0777, true);
             }
@@ -28,33 +35,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $ext = pathinfo($image['name'], PATHINFO_EXTENSION);
             $allowedExt = ['jpg', 'jpeg', 'png', 'gif'];
 
+            // Check if the file extension is allowed
             if (in_array(strtolower($ext), $allowedExt)) {
+                // Create a unique filename
                 $filename = uniqid('', true) . '.' . $ext;
                 $uploadFilePath = $uploadDir . $filename;
 
+                // Move the uploaded file to the upload directory
                 if (move_uploaded_file($image['tmp_name'], $uploadFilePath)) {
                     try {
-                        // Start transaction
-                        $pdo->beginTransaction();
-
-                        // Create message for SMS (first 250 characters of description)
-                        $message = substr($description, 0, 250);
-
-                        // Insert announcement
-                        $stmt = $pdo->prepare("INSERT INTO announcement (image, description, title, admin_id, message) 
-                                             VALUES (:filename, :description, :title, :admin_id, :message)");
-                        
+                        // Insert the file details into the database using PDO
+                        $stmt = $pdo->prepare("INSERT INTO announcement (image, description, title, admin_id) VALUES (:filename, :description, :title, :admin_id)");
                         $stmt->bindParam(':filename', $filename);
                         $stmt->bindParam(':description', $description);
                         $stmt->bindParam(':title', $title);
-                        $stmt->bindParam(':admin_id', $admin_id, PDO::PARAM_INT);
-                        $stmt->bindParam(':message', $message);
+                        $stmt->bindParam(':admin_id', $admin_id, PDO::PARAM_INT); // Ensure admin_id is bound as an integer
 
                         if ($stmt->execute()) {
+                            // Get the ID of the last inserted announcement
                             $announcement_id = $pdo->lastInsertId();
 
-                            // Insert all the relationships (your existing code for year_levels, departments, and courses)
-                            // ... (keep your existing relationship insertion code here)
+                            // Check if SMS notifications should be sent
+                            if (isset($_POST['sendSms']) && $_POST['sendSms'] == '1') {
+                                $title = $_POST['title'];
+                                $description = $_POST['description'];
+                                $message = substr($description, 0, 250); // Limit message to 250 characters
+
+                                // Get students based on tags
+                                $students = getStudentsForAnnouncement($pdo, $announcement_id, $year_levels, $departments, $courses);
+
+                                // Send SMS to students
+                                sendSmsToStudents($pdo, $announcement_id, $students, $title, $message);
+                            }
+
+
                             // Function to get the corresponding ID from a table based on a name field
                             function getIdByName($pdo, $table, $column, $value, $id) {
                                 $sql = "SELECT $id FROM $table WHERE $column = ?";
@@ -92,33 +106,80 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     $stmt->execute([$announcement_id, $course_id]);
                                 }
                             }
-                            // If tags were selected, send SMS
-                            if (!empty($year_levels) && !empty($departments) && !empty($courses)) {
-                                $students = getStudentsForAnnouncement($pdo, $announcement_id, $year_levels, $departments, $courses);
-                                $smsResults = sendSMSToStudents($pdo, $announcement_id, $students, $title, $message);
-                            }
 
-                            $pdo->commit();
-                            
-                            echo "<script>window.location.href = 'admin.php';</script>";
+                            echo "<script>
+                            window.location.href = 'admin.php';
+                                </script>";
                         } else {
-                            throw new Exception("Failed to save announcement details.");
+                            echo "Failed to save details to database.";
                         }
-                    } catch (Exception $e) {
-                        $pdo->rollBack();
-                        error_log("Error in announcement creation: " . $e->getMessage());
-                        echo "An error occurred while creating the announcement.";
+                    } catch (PDOException $e) {
+                        echo "Database error: " . $e->getMessage();
                     }
                 } else {
-                    echo "Failed to upload image.";
+                    echo "Failed to move uploaded file.";
                 }
             } else {
-                echo "Invalid image format.";
+                echo "Invalid file extension.";
             }
         } else {
             echo "Invalid admin ID.";
         }
     } else {
-        echo "No image uploaded.";
+        echo "No file uploaded or there was an upload error.";
     }
+} else {
+    echo "Invalid request.";
+}
+
+function getStudentsForAnnouncement($pdo, $announcement_id, $year_levels, $departments, $courses) {
+    $query = "SELECT DISTINCT s.student_id, s.contact_number 
+              FROM student s
+              JOIN announcement_year_level ayl ON s.year_level_id = ayl.year_level_id
+              JOIN announcement_department ad ON s.department_id = ad.department_id
+              JOIN announcement_course ac ON s.course_id = ac.course_id
+              WHERE ayl.announcement_id = :announcement_id
+              AND ad.announcement_id = :announcement_id
+              AND ac.announcement_id = :announcement_id";
+    
+    $stmt = $pdo->prepare($query);
+    $stmt->execute([':announcement_id' => $announcement_id]);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function sendSmsToStudents($pdo, $announcement_id, $students, $title, $message) {
+    $apiURL = 'wg43qy.api.infobip.com';
+    $apiKey = '90f70a7a0843650f0cd70d01ac47e048-8c7ffe9f-c816-4b9a-88c6-3370b9584292';
+
+    $configuration = new Configuration(host: $apiURL, apiKey: $apiKey);
+    $api = new SmsApi(config: $configuration);
+
+    foreach ($students as $student) {
+        $destination = new SmsDestination(to: $student['contact_number']);
+        $smsMessage = new SmsTextualMessage(
+            destinations: [$destination],
+            text: $title . "\n" . $message,
+            from: "447491163443"
+        );
+
+        $request = new SmsAdvancedTextualRequest(messages: [$smsMessage]);
+
+        try {
+            $response = $api->sendSmsMessage($request);
+            logSmsStatus($pdo, $announcement_id, $student['student_id'], 'SENT');
+        } catch (Exception $e) {
+            logSmsStatus($pdo, $announcement_id, $student['student_id'], 'FAILED');
+            // You might want to log the error message as well
+        }
+    }
+}
+
+function logSmsStatus($pdo, $announcement_id, $student_id, $status) {
+    $query = "INSERT INTO sms_log (announcement_id, student_id, status) VALUES (:announcement_id, :student_id, :status)";
+    $stmt = $pdo->prepare($query);
+    $stmt->execute([
+        ':announcement_id' => $announcement_id,
+        ':student_id' => $student_id,
+        ':status' => $status
+    ]);
 }
